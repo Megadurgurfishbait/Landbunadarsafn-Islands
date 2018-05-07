@@ -74,7 +74,7 @@ module.exports = function (app) {
                         return res.status(404).json({
                               err: 'no files exists'
                         });
-                  }
+                  } 
 
                   return res.json(file);
             });
