@@ -66,7 +66,7 @@ module.exports = function (app) {
       app.get('/post/:postname', bodyParser.json(), Authentication.getSinglePost);
       app.put('/post/:id', bodyParser.json(), Authentication.updatePost);
 
-
+     
       app.get('/files/:filename', (req, res) => {
 
             gfs.db.collection('uploads' + '.files').findOne({filename:req.params.filename}, (err, file) => {
