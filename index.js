@@ -1,0 +1,40 @@
+// Main starting point of the application
+const express = require('express');
+const http = require('http');
+const bodyParser = require('body-parser');
+const morgan = require('morgan');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const app = express();
+const router = require('./router');
+const fs = require('fs');
+
+
+
+// DB Setup
+
+//mongoose.connect('mongodb+srv://Megadurgur:Megavika1@cluster0-oytqq.mongodb.net/test');
+
+// App Setup
+// .Use gerir hlutina að middleware
+// Morgan er logging middleware.
+
+app.use(morgan('combined'));
+app.use(cors());
+app.use('/images', express.static('images'));
+router(app);
+app.use(bodyParser.json({type: '*/*'}));
+
+
+
+
+
+
+// Server Setup
+
+// Portin sem að við erum að nota
+const port = process.env.PORT || 3090;
+
+// Tengir http request við appið okkar.
+const server = http.createServer(app);
+server.listen(port);
