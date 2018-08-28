@@ -1,5 +1,6 @@
 const Photos = require('../models/frontpagephotos');
 
+
 exports.setFrontpagePicture = function(req, res, next) {
   const newPhoto = new Photos({
     imgLocation: req.body.imgLocation

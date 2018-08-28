@@ -66,7 +66,7 @@ module.exports = function (app) {
       app.get('/post/:postname', bodyParser.json(), Authentication.getSinglePost);
       app.put('/post/:id', bodyParser.json(), Authentication.updatePost);
 
-     
+
       app.get('/files/:filename', (req, res) => {
 
             gfs.db.collection('uploads' + '.files').findOne({filename:req.params.filename}, (err, file) => {
@@ -74,7 +74,7 @@ module.exports = function (app) {
                         return res.status(404).json({
                               err: 'no files exists'
                         });
-                  } 
+                  }
 
                   return res.json(file);
             });
@@ -101,17 +101,39 @@ module.exports = function (app) {
                   }
             });
       })
+      
+      app.get('/file/:filename', (req, res) => {
+            gfs.collection('uploads');
+            gfs.files.findOne({filename:req.params.filename}, (err, file) => {
+                console.log(gfs.db.collection('uploads' + '.files'))
+                  if(!file || file.length === 0){
+                        return res.status(404).json({
+                              err: 'no files exists'
+                        });
+                  }
+
+                  // Check if pdf
+                  if(file.contentType === "application/pdf"){
+                        const readstream = gfs.createReadStream(file.filename);
+                        readstream.pipe(res);
+                  }else{
+                        res.status(404).json({
+                              err: 'not an pdf file'
+                        });
+                  }
+            });
+      })
 
       // Allar umsóknir sem að vilja komast inná '/' route verður
       // fyrst að fara i gegnum requireAuth til að komast áfram.
       app.get('/', requireAuth, function(req, res) {
-
             res.send({message: 'Super secret code is ABC123'});
       });
 
       app.post('/frontpagephoto', bodyParser.json(), frontpagephotos.setFrontpagePicture);
       app.get('/frontpagephotos', bodyParser.json(), frontpagephotos.getFrontpagePicture);
       app.delete('/deleteFrontpagephoto/:filename', bodyParser.json(), frontpagephotos.deleteFrontpagephoto);
+
 
       app.post('/events', bodyParser.json(), Events.createEvent);
       app.get('/events', bodyParser.json(), Events.getEvents);
