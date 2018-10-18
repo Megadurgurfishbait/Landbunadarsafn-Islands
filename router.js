@@ -10,7 +10,7 @@ const sharp = require('sharp');
 const path = require('path')
 const GridFsStorage = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
-const mongoURI = 'mongodb:178.128.162.183:27017/';
+const mongoURI = 'mongodb://178.128.162.183:27017';
 const conn = mongoose.createConnection(mongoURI);
 let gfs;
 const bodyParser = require('body-parser');
