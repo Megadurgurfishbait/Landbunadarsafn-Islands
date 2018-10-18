@@ -1,4 +1,5 @@
 const Authentication = require('./controllers/authentication');
+const config = require('./config');
 const frontpagephotos = require('./controllers/frontpagePhotos');
 const passportService = require('./services/passport');
 const Events = require('./controllers/events');
@@ -10,8 +11,7 @@ const sharp = require('sharp');
 const path = require('path')
 const GridFsStorage = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
-const mongoURI = 'mongodb://178.128.162.183:27017';
-const conn = mongoose.createConnection(mongoURI);
+const conn = mongoose.createConnection(config.mongodb);
 let gfs;
 const bodyParser = require('body-parser');
 // Session False notum við til að segja að við ætlum ekki að nota cookie based session.
@@ -29,7 +29,7 @@ module.exports = function (app) {
       });
 
       const storage = new GridFsStorage({
-            url: mongoURI,
+            url: config.mongodb,
             file: (req, file) => {
                   return new Promise((resolve, reject) => {
                         crypto.randomBytes(16, (err, buf) => {

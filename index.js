@@ -8,12 +8,12 @@ const cors = require('cors');
 const app = express();
 const router = require('./router');
 const fs = require('fs');
-
+const config = require('./config');
 
 
 // DB Setup
 
-mongoose.connect('mongodb://178.128.162.183:27017');
+mongoose.connect(config.mongodb);
 
 mongoose.connection.once('open', function(){
       console.log('connection has been made, now make fireworks');
