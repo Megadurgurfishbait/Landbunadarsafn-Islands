@@ -13,7 +13,13 @@ const fs = require('fs');
 
 // DB Setup
 
-mongoose.connect('mongodb:178.128.162.183:27017/');
+mongoose.connect('mongodb://178.128.162.183:27017');
+
+mongoose.connection.once('open', function(){
+      console.log('connection has been made, now make fireworks');
+}).on('error', function(error){
+      console.log('Connection error', error);
+});
 
 // App Setup
 // .Use gerir hlutina að middleware
