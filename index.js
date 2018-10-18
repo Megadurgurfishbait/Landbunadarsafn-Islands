@@ -13,7 +13,7 @@ const fs = require('fs');
 
 // DB Setup
 
-mongoose.connect('mongodb://Megadurgurfishbait:Megavika1@ds217560.mlab.com:17560/megadurgur-auth');
+mongoose.connect('mongodb:178.128.162.183:27017/megadurgur-auth');
 
 // App Setup
 // .Use gerir hlutina að middleware
