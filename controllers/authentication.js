@@ -17,7 +17,7 @@ function tokenForUser(user){
 
 exports.getPosts = function(req, res){
 
-  Post.find({}, function (err, result)  {
+  Post.find({}, null, {sort: {createdAt: -1 }}, function (err, result)  {
     res.json(result);
   })
 }
