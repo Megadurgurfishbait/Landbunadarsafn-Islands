@@ -77,6 +77,7 @@ exports.signup = function (req, res, next) {
       });
 }
 exports.uploadPost = function(req, res, next){
+      console.log(req.body);
       var today = new Date();
       var dd = today.getDate();
       var mm = today.getMonth()+1; //January is 0!
