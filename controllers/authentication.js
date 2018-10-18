@@ -78,14 +78,18 @@ exports.signup = function (req, res, next) {
 }
 exports.uploadPost = function(req, res, next){
       console.log(req.body);
+      /*
       var today = new Date();
       var dd = today.getDate();
       var mm = today.getMonth()+1; //January is 0!
       var yyyy = today.getFullYear();
       var todayDate = `${dd}/${mm}/${yyyy}`;
+      */
+
+
       const newPost = new Post({
             title: req.body.title,
-            createdAt: todayDate,
+            createdAt: req.body.createdAt,
             text: req.body.text,
             headingImg: req.body.headingPath,
             filePath: req.body.filePath
