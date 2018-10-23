@@ -77,35 +77,31 @@ exports.signup = function (req, res, next) {
       });
 }
 exports.uploadPost = function(req, res, next){
-      console.log(req.body);
-      /*
-      var today = new Date();
-      var dd = today.getDate();
-      var mm = today.getMonth()+1; //January is 0!
-      var yyyy = today.getFullYear();
-      var todayDate = `${dd}/${mm}/${yyyy}`;
-      */
 
-
-      const newPost = new Post({
+      let newPost = new Post({
             title: req.body.title,
             createdAt: req.body.createdAt,
             text: req.body.text,
             headingImg: req.body.headingPath,
             filePath: req.body.filePath
       });
-      newPost
-            .save()
-            .then( result => {
-                  console.log(result);
-            })
+ 
+      newPost.save(function(error, post) {
+            if(error){
+                  console.error("YO ERRO IS: ", error);
+            }
+
+            console.log("YO SHIT HAS BEEN SAVED", post);
+            return res.json(post);
+
+            });
 }
 
 exports.deletePost = function(req, res, next) {
   var ObjectId = require('mongodb').ObjectId;
   var id = req.params.id;
   var o_id = new ObjectId(id);
-  console.log(o_id);
+
   Post.remove({_id:o_id}, function (err, result) {
     if(err) return res.json(err);
     res.json(result);
@@ -118,7 +114,7 @@ exports.updatePost = function(req, res, next) {
   var ObjectId = require('mongodb').ObjectId;
   var id = req.params.id;
   var o_id = new ObjectId(id);
-  console.log(req.params.id);
+
   Post.findOneAndUpdate(
       {_id:o_id},
       {

@@ -11,7 +11,7 @@ module.exports = {
 
 module.exports = {
       secret: '1235df34vg34563g35634',
-      mongodb: 'mongodb://178.128.162.183:27017/test'
+      mongodb: 'mongodb://GS:Beggihommi1@178.128.162.183:27017/test?authSource=admin'
 };
 
 

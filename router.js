@@ -24,8 +24,6 @@ module.exports = function (app) {
 
       conn.once('open',() => {
             gfs = Grid(conn.db, mongoose.mongo);
-
-
       });
 
       const storage = new GridFsStorage({
