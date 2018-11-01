@@ -4,20 +4,21 @@ const frontpagephotos = require('./controllers/frontpagePhotos');
 const passportService = require('./services/passport');
 const Events = require('./controllers/events');
 const mongoose = require('mongoose');
-const crypto = require('crypto');
 const passport = require('passport');
 const multer = require('multer');
-const sharp = require('sharp');
-const path = require('path')
-const GridFsStorage = require('multer-gridfs-storage');
+const multerS3 = require('multer-s3');
+const aws = require('aws-sdk');
 const Grid = require('gridfs-stream');
+var tinify = require('tinify');
+tinify.key = "b46Yf2kc4VWdZ29vEFFygnk5JslMWuY6";
+
+
 const conn = mongoose.createConnection(config.mongodb);
 let gfs;
 const bodyParser = require('body-parser');
 // Session False notum við til að segja að við ætlum ekki að nota cookie based session.
 // Þetta er kall á middleware til að sjá hvort að notandi megi fara inn á ákveðna route.
 const requireAuth = passport.authenticate('jwt', {session: false });
-
 const requireSignin = passport.authenticate('local',{session: false});
 
 module.exports = function (app) {
@@ -25,40 +26,56 @@ module.exports = function (app) {
       conn.once('open',() => {
             gfs = Grid(conn.db, mongoose.mongo);
       });
+      const spacesEndpoint = new aws.Endpoint('ams3.digitaloceanspaces.com');
+      const s3 = new aws.S3({
+      endpoint: spacesEndpoint
+      });
 
-      const storage = new GridFsStorage({
-            url: config.mongodb,
-            file: (req, file) => {
-                  return new Promise((resolve, reject) => {
-                        crypto.randomBytes(16, (err, buf) => {
-                              if(err) {return reject(err);}
-                              const filename1 = buf.toString('hex') + path.extname(file.originalname);
-                              const fileInfo = {
-                                    filename: filename1,
-                                    bucketName: 'uploads'
-                              };
-                              resolve(fileInfo)
-                        })
-                  })
-            }
-
-      })
-      const upload = multer({storage});
-      app.post('/upload', upload.single('file'), (req, res) => {
-            res.json({file: req.file});
-      })
-
-      app.get('/files', (req, res) => {
-            gfs.db.collection('uploads' + '.files').find().toArray((err, files) => {
-                  if(!files || files.length === 0){
-                        return res.json({
-                              err: 'no files exists'
-                        });
-                  }
-
-                  return res.json(files);
+      const upload = multer({
+            storage: multerS3({
+              s3: s3,
+              bucket: 'geymsla/images',
+              acl: 'public-read',
+              key: function (request, file, cb) {
+                  console.log(request);
+                  console.log(file.originalname);
+             cb(null, file.originalname);
+              }
             })
-      })
+          }).array('file', 1);
+
+
+          app.post('/upload', function (request, response, next) {
+
+            upload(request, response, function (error) {
+              if (error) {
+                console.log(error);
+              }
+              console.log('File uploaded successfully.');
+            });
+          });
+
+
+          app.get('/files', async function (req, res) {
+                  console.log("Calling");
+                  
+                  const response = await s3.listObjectsV2({
+                        Bucket: "geymsla",
+                        Prefix: "images"
+                  }).promise();
+                  res.send(response.Contents)
+                }
+          )
+
+          app.get('/files:filename', async function (req, res) {    
+            const response = await s3.listObjectsV2({
+                  Bucket: "geymsla",
+                  Prefix: "images"
+            }).promise();
+            res.send(response.Contents)
+          }
+    )
+
       app.get('/posts', bodyParser.json() ,Authentication.getPosts);
 
       app.get('/post/:postname', bodyParser.json(), Authentication.getSinglePost);
@@ -77,51 +94,8 @@ module.exports = function (app) {
                   return res.json(file);
             });
       })
-
-      app.get('/image/:filename', (req, res) => {
-            gfs.collection('uploads');
-            gfs.files.findOne({filename:req.params.filename}, (err, file) => {
-                console.log(gfs.db.collection('uploads' + '.files'))
-                  if(!file || file.length === 0){
-                        return res.status(404).json({
-                              err: 'no files exists'
-                        });
-                  }
-
-                  // Check if image
-                  if(file.contentType === "image/jpeg" || file.contentType === 'image/png'){
-                        const readstream = gfs.createReadStream(file.filename);
-                        readstream.pipe(res);
-                  }else{
-                        res.status(404).json({
-                              err: 'not an image'
-                        });
-                  }
-            });
-      })
       
-      app.get('/file/:filename', (req, res) => {
-            gfs.collection('uploads');
-            gfs.files.findOne({filename:req.params.filename}, (err, file) => {
-                console.log(gfs.db.collection('uploads' + '.files'))
-                  if(!file || file.length === 0){
-                        return res.status(404).json({
-                              err: 'no files exists'
-                        });
-                  }
-
-                  // Check if pdf
-                  if(file.contentType === "application/pdf"){
-                        const readstream = gfs.createReadStream(file.filename);
-                        readstream.pipe(res);
-                  }else{
-                        res.status(404).json({
-                              err: 'not an pdf file'
-                        });
-                  }
-            });
-      })
-
+      
       // Allar umsóknir sem að vilja komast inná '/' route verður
       // fyrst að fara i gegnum requireAuth til að komast áfram.
       app.get('/', requireAuth, function(req, res) {
@@ -148,28 +122,5 @@ module.exports = function (app) {
 
 
       app.delete('/removepost/:id', bodyParser.json(), Authentication.deletePost);
-      app.delete('/removeImage/:id', bodyParser.json(), (req, res, next) => {
-        var ObjectId = require('mongodb').ObjectId;
-        var id = req.params.id;
-        var o_id = new ObjectId(id);
-        console.log(o_id);
-        console.log(gfs.db.collection('uploads' + '.chunks'))
-        gfs.collection('uploads').remove({_id:o_id}, function (err, result) {
-          if(err) return res.json(err);
-          res.json(result);
-        })
-      });
-
-      app.delete('/removeImageChunks/:id', bodyParser.json(), (req, res, next) => {
-        var ObjectId = require('mongodb').ObjectId;
-        var id = req.params.id;
-        var o_id = new ObjectId(id);
-        console.log(o_id);
-        gfs.db.collection('uploads' + '.chunks').remove({files_id:o_id}, function (err, result) {
-          if(err) return res.json(err);
-          res.json(result);
-        })
-      });
-
 
 }
