@@ -1,8 +1,10 @@
 const jwt = require('jwt-simple');
+const passport = require('passport');
 const config = require('../config');
 const User = require('../models/user');
 const Post = require('../models/post');
 const ObjectID = require('mongodb').ObjectID;
+
 const objectId = new ObjectID();
 
 function tokenForUser(user){
@@ -14,30 +16,6 @@ function tokenForUser(user){
       // config.secret er sá stengur sem að við bjuggum til sjálf í root dir.
       return jwt.encode( { sub: user.id, iat: timestamp }, config.secret);
 }
-
-exports.getPosts = function(req, res){
-
-  Post.find({}, null, {sort: {createdAt: -1 }}, function (err, result)  {
-    res.json(result);
-  })
-}
-
-exports.getSinglePost = function (req, res) {
-  var ObjectId = require('mongodb').ObjectId;
-  var id = req.params.postname;
-  var o_id = new ObjectId(id);
-  Post.find({_id:o_id}, function (err, result) {
-    if(err) return res.json(err);
-    res.json(result);
-  })
-}
-
-exports.signin = function(req, res, next){
-      // User has already had their email and password auth'd
-      // We just need to give them a token.
-      res.send({ token: tokenForUser(req.user)});
-}
-
 
 exports.signup = function (req, res, next) {
       console.log(req.body.email);
@@ -76,6 +54,36 @@ exports.signup = function (req, res, next) {
             });
       });
 }
+
+exports.signin = function(req, res, next){
+      // User has already had their email and password auth'd
+      // We just need to give them a token.
+      console.log("HER ER EG");
+      res.send({ token: tokenForUser(req.user)});
+
+}
+
+exports.getPosts = function(req, res){
+
+  Post.find({}, null, {sort: {createdAt: -1 }}, function (err, result)  {
+    res.json(result);
+  })
+}
+
+exports.getSinglePost = function (req, res, next) {
+  var ObjectId = require('mongodb').ObjectId;
+  var id = req.params.postname;
+  var o_id = new ObjectId(id);
+  Post.find({_id:o_id}, function (err, result) {
+    if(err) return res.json(err);
+    res.json(result);
+  })
+}
+
+
+
+
+
 exports.uploadPost = function(req, res, next){
 
       let newPost = new Post({

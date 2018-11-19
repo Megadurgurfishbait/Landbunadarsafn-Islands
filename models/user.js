@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt-nodejs');
 // Define our model
 
 const userSchema = new Schema( {
-
+      
       email: { type: String, unique: true, lowercase: true },
       password: String
 
@@ -18,9 +18,10 @@ userSchema.pre('save', function(next){
       // Ná í aðgang að user. Hér er user instance af user.
       const user = this;
 
+
       // Býr til salt svo keyra callback.
       // Salt => Random strings of characters.
-      // Salt er lykilinn að því að dulkóða lykilorðið tilbaka.
+      // Salt er lykilinn að því að dulkóða lykilorðið tilbaka. 
       bcrypt.genSalt(10, function (err, salt){
             if(err) {return next(err);}
 
