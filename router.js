@@ -55,6 +55,7 @@ module.exports = function (app) {
                         Bucket: "geymsla",
                         Prefix: "images"
                   }).promise();
+                  console.log(res);
                   res.send(response.Contents)
                 }
           )
@@ -69,6 +70,7 @@ module.exports = function (app) {
     )
 
       app.get('/posts', bodyParser.json() ,Authentication.getPosts);
+      app.get('/frontPosts', bodyParser.json() ,Authentication.getFrontPosts);
 
       app.get('/post/:postname', bodyParser.json(), Authentication.getSinglePost);
       app.put('/post/:id', bodyParser.json(), Authentication.updatePost);
@@ -80,16 +82,11 @@ module.exports = function (app) {
             res.send({message: 'Super secret code is ABC123'});
       });
 
-
       app.post('/signin',bodyParser.json(), requireSignin, Authentication.signin);
   // Req => Request
   // Res => Response -> það sem að við sendu til baka á þann sem að sendi Request
   // Next => Error Handling
       app.post('/post', bodyParser.json(), Authentication.uploadPost);
-
       app.post('/signup',bodyParser.json() , Authentication.signup);
-
-
       app.delete('/removepost/:id', bodyParser.json(), Authentication.deletePost);
-
 }

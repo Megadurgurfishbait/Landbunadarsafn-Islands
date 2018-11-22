@@ -1,5 +1,5 @@
 const jwt = require('jwt-simple');
-const passport = require('passport');
+const passport = require('passport'); // EKKI EYÐA ÚT
 const config = require('../config');
 const User = require('../models/user');
 const Post = require('../models/post');
@@ -64,11 +64,16 @@ exports.signin = function(req, res, next){
 }
 
 exports.getPosts = function(req, res){
-
-  Post.find({}, null, {sort: {createdAt: -1 }}, function (err, result)  {
+  Post.find({}, null, {sort: {createdAt: -1 }, select: '-headingImg -filePath -text'}, function (err, result)  {
     res.json(result);
   })
 }
+
+exports.getFrontPosts = function(req, res){
+            Post.find({}, null, {sort: {createdAt: -1 }, limit:4, select: '-filePath' }, function (err, result)  {
+        res.json(result);
+      })
+    }
 
 exports.getSinglePost = function (req, res, next) {
   var ObjectId = require('mongodb').ObjectId;
@@ -79,9 +84,6 @@ exports.getSinglePost = function (req, res, next) {
     res.json(result);
   })
 }
-
-
-
 
 
 exports.uploadPost = function(req, res, next){
