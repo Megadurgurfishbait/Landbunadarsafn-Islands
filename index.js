@@ -8,7 +8,7 @@ const cors = require('cors');
 const app = express();
 const router = require('./router');
 const config = require('./config');
-
+const path = require('path');
 
 // DB Setup
 
@@ -26,16 +26,13 @@ mongoose.connection.once('open', function(){
 
 app.use(morgan('combined'));
 app.use(cors());
-app.use('/images', express.static('images'));
+app.use(express.static(path.join(__dirname, '/build')));
 router(app);
 app.use(bodyParser.json({type: '*/*'}));
 
-
-
-
-
-
-// Server Setup
+app.get('/', function(req, res) {
+      res.sendFile(path.join(__dirname, '/build/index.html'));
+});
 
 // Portin sem að við erum að nota
 const port = process.env.PORT || 8000;
