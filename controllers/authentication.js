@@ -65,13 +65,16 @@ exports.signin = function(req, res, next){
 
 exports.getPosts = function(req, res){
   Post.find({}, null, {sort: {createdAt: -1 }, select: '-headingImg -filePath -text'}, function (err, result)  {
+      console.log("HER!!!!!!!!!!!!!!!!!!!!!!!!!!!!", result);
     res.json(result);
   })
 }
 
 exports.getFrontPosts = function(req, res){
             Post.find({}, null, {sort: {createdAt: -1 }, limit:4, select: '-filePath' }, function (err, result)  {
+                  console.log("HER!!!!!!!!!!!!!!!!!!!!!!!!!!!!", result);
         res.json(result);
+        
       })
     }
 

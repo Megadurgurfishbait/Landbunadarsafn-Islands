@@ -28,7 +28,12 @@ app.use(compression());
 app.use(morgan('combined'));
 app.use(cors());
 
+
+
 app.use(express.static(path.join(__dirname, 'build/'), {maxAge: 86400000}))
+
+router(app);
+
 app.get('/', function(req, res) {
       res.sendFile(path.join(__dirname, '/index.html'));
 });
@@ -36,7 +41,8 @@ app.get('/', function(req, res) {
 app.get('/*', function(req, res) {
       res.sendFile(path.join(__dirname, '/build/index.html'));
   });
-router(app);
+
+
 app.use(bodyParser.json({type: '*/*'}));
 
 
