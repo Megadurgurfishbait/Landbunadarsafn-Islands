@@ -1,1 +1,8 @@
 node_modules
+
+#.gitignore
+client/src/*
+client/public/*
+client/build/static/css/*.map
+client/build/static/js/*.map
+config.js

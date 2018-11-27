@@ -1,5 +1,5 @@
 const Authentication = require('./controllers/authentication');
-
+const path = require('path');
 
 const mongoose = require('mongoose');
 const passport = require('passport');
@@ -75,12 +75,6 @@ module.exports = function (app) {
       app.get('/post/:postname', bodyParser.json(), Authentication.getSinglePost);
       app.put('/post/:id', bodyParser.json(), Authentication.updatePost);
 
-      
-      // Allar umsóknir sem að vilja komast inná '/' route verður
-      // fyrst að fara i gegnum requireAuth til að komast áfram.
-      app.get('/', requireAuth, function(req, res) {
-            res.send({message: 'Super secret code is ABC123'});
-      });
 
       app.post('/signin',bodyParser.json(), requireSignin, Authentication.signin);
   // Req => Request
