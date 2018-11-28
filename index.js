@@ -30,7 +30,7 @@ app.use(cors());
 
 
 
-app.use(express.static(path.join(__dirname, 'build/'), {maxAge: 86400000}))
+app.use(express.static(path.join(__dirname, 'build/'), {maxAge: 86400*1024}))
 
 router(app);
 
@@ -39,7 +39,7 @@ app.get('/', function(req, res) {
 });
 
 app.get('/*', function(req, res) {
-      res.sendFile(path.join(__dirname, '/build/index.html'));
+      res.redirect('/');
   });
 
 
