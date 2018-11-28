@@ -65,16 +65,13 @@ exports.signin = function(req, res, next){
 
 exports.getPosts = function(req, res){
   Post.find({}, null, {sort: {createdAt: -1 }, select: '-headingImg -filePath -text'}, function (err, result)  {
-      console.log("HER!!!!!!!!!!!!!!!!!!!!!!!!!!!!", result);
     res.json(result);
   })
 }
 
 exports.getFrontPosts = function(req, res){
             Post.find({}, null, {sort: {createdAt: -1 }, limit:4, select: '-filePath' }, function (err, result)  {
-                  console.log("HER!!!!!!!!!!!!!!!!!!!!!!!!!!!!", result);
         res.json(result);
-        
       })
     }
 
@@ -83,6 +80,7 @@ exports.getSinglePost = function (req, res, next) {
   var id = req.params.postname;
   var o_id = new ObjectId(id);
   Post.find({_id:o_id}, function (err, result) {
+        console.log("SinglePost: ", result);
     if(err) return res.json(err);
     res.json(result);
   })
@@ -120,8 +118,6 @@ exports.deletePost = function(req, res, next) {
     res.json(result);
   })
 }
-
-
 
 exports.updatePost = function(req, res, next) {
   var ObjectId = require('mongodb').ObjectId;
