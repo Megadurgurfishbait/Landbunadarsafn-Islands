@@ -63,16 +63,19 @@ module.exports = function (app) {
               key: function (request, file, cb) {
              cb(null, file.originalname);
               }
-            })
+            }
+            )
           }).array('file', 1);
+
+
 
 
           app.post('/upload', function (request, response, next) {
             upload(request, response, function (error) {
               if (error) {
-                console.log(error);
+                response.send(error);
               }
-              res.send('File uploaded successfully.');
+              response.send('File uploaded successfully.');
             });
           });
 
