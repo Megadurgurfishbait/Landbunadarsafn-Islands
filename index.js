@@ -49,7 +49,7 @@ app.use(bodyParser.json({type: '*/*'}));
 
 
 // Portin sem að við erum að nota
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 3000;
 
 // Tengir http request við appið okkar.
 const server = http.createServer(app);
