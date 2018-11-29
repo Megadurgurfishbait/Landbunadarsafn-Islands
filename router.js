@@ -1,6 +1,5 @@
 const Authentication = require('./controllers/authentication');
 const path = require('path');
-
 const mongoose = require('mongoose');
 const passport = require('passport');
 const config = require('./config');
@@ -55,6 +54,7 @@ module.exports = function (app) {
             endpoint: spacesEndpoint
             });
 
+
       const upload = multer({
             storage: multerS3({
               s3: s3,
@@ -79,17 +79,18 @@ module.exports = function (app) {
             });
           });
 
+
           app.get('/files', async function (req, res) {
                   const response = await s3.listObjectsV2({
                         Bucket: "geymsla",
                         Prefix: "images"
                   }).promise();
-                  console.log(res);
                   res.send(response.Contents)
                 }
           )
+
+
           app.post('/pdfupload', PDFupload.single('PDF'), function (req, res, next)  {
-                console.log(req);
           });
 
           app.get('/files/:filename', async function (req, res) {    
