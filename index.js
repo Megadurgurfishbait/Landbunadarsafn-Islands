@@ -29,7 +29,7 @@ app.use(cors());
 
 
 app.use('/pdfupload', express.static('./static/media/'));
-app.use(express.static(path.join(__dirname, 'build'), {maxAge: 86400*1024}))
+app.use(express.static(path.join(__dirname, 'build'), {maxAge: "50d"}))
 
 router(app);
 
