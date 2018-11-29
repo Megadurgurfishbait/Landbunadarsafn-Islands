@@ -14,7 +14,6 @@ const compression = require('compression')
 // DB Setup
 
 mongoose.connect(config.mongodb);
-
 mongoose.connection.once('open', function(){
       console.log('connection has been made, now make fireworks');
 }).on('error', function(error){
@@ -29,8 +28,8 @@ app.use(morgan('combined'));
 app.use(cors());
 
 
-
-app.use(express.static(path.join(__dirname, 'build/'), {maxAge: 86400*1024}))
+app.use('/pdfupload', express.static('./static/media/'));
+app.use(express.static(path.join(__dirname, 'build'), {maxAge: 86400*1024}))
 
 router(app);
 
@@ -38,9 +37,34 @@ app.get('/', function(req, res) {
       res.sendFile(path.join(__dirname, '/index.html'));
 });
 
-app.get('/*', function(req, res) {
-      res.redirect('/');
+app.get('/skrainn', (req, res) => {
+      res.sendFile(path.join(__dirname, 'build/index.html'));
   });
+
+  app.get('/frettir/*', (req, res) => {
+      res.sendFile(path.join(__dirname, 'build/index.html'));
+  });
+
+  app.get('/frodleikur', (req, res) => {
+      res.sendFile(path.join(__dirname, 'build/index.html'));
+  });
+
+  app.get('/english', (req, res) => {
+      res.sendFile(path.join(__dirname, 'build/index.html'));
+  });
+
+  app.get('/opnunartimar', (req, res) => {
+      res.sendFile(path.join(__dirname, 'build/index.html'));
+  });
+
+  app.get('/eldrifrettir', (req, res) => {
+      res.sendFile(path.join(__dirname, 'build/index.html'));
+  });
+
+  app.get('/*', (req, res) => {
+        res.redirect('/');
+  });
+
 
 
 app.use(bodyParser.json({type: '*/*'}));

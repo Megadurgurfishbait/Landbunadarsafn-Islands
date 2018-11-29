@@ -10,6 +10,33 @@ const aws = require('aws-sdk');
 const Grid = require('gridfs-stream');
 const passportService = require('./services/passport');
 
+// PDF UPLOADS //////////////////////////////////////////
+const PDFStorage = multer.diskStorage({
+      destination: function(req, file, cb){
+            cb(null, './static/media/');
+      },
+      filename: function(req, file, cb){
+            cb(null, file.originalname);
+      }
+});
+
+const fileFilter = (req, file , cb) => {
+      // Reject File
+      if(file.mimetype === "application/pdf"){
+            cb(null, true);
+      }else {
+            cb(new Error("Ekki pdf skjal."), false);
+      }
+}
+const PDFupload = multer({
+      storage: PDFStorage,
+      fileFilter: fileFilter
+});
+
+
+
+/////////////////////////////////////////////////////////
+
 
 const conn = mongoose.createConnection(config.mongodb);
 const bodyParser = require('body-parser');
@@ -45,10 +72,9 @@ module.exports = function (app) {
               if (error) {
                 console.log(error);
               }
-              console.log('File uploaded successfully.');
+              res.send('File uploaded successfully.');
             });
           });
-
 
           app.get('/files', async function (req, res) {
                   const response = await s3.listObjectsV2({
@@ -59,6 +85,9 @@ module.exports = function (app) {
                   res.send(response.Contents)
                 }
           )
+          app.post('/pdfupload', PDFupload.single('PDF'), function (req, res, next)  {
+                console.log(req);
+          });
 
           app.get('/files/:filename', async function (req, res) {    
             const response = await s3.listObjectsV2({
