@@ -27,22 +27,17 @@ app.use(compression());
 app.use(morgan('combined'));
 app.use(cors());
 
-<<<<<<< HEAD
-app.use('/pdfupload', express.static('./static/media/'));
-app.use(express.static('static'));
-=======
 
 app.use('/pdfupload', express.static('./static/media/'));
 app.use(express.static(path.join(__dirname, 'build'), {maxAge: "50d"}))
 
->>>>>>> 9e35bf862ef80ada93ae8fab6e6d6445e9858356
+
 router(app);
 
 app.get('/', function(req, res) {
-<<<<<<< HEAD
-=======
-      res.sendFile(path.join(__dirname, '/index.html'));
->>>>>>> 9e35bf862ef80ada93ae8fab6e6d6445e9858356
+
+      res.sendFile(path.join(__dirname, 'build/index.html'));
+
 });
 
 app.get('/skrainn', (req, res) => {
