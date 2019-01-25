@@ -26,12 +26,13 @@ mongoose.connection.once('open', function(){
 
 app.use(morgan('combined'));
 app.use(cors());
-app.use(express.static(path.join(__dirname, '/Client/build')));
+
+app.use('/pdfupload', express.static('./static/media/'));
+app.use(express.static('static'));
 router(app);
 app.use(bodyParser.json({type: '*/*'}));
 
 app.get('/', function(req, res) {
-      res.sendFile(path.join(__dirname, '/Client/build/index.html'));
 });
 
 // Portin sem að við erum að nota

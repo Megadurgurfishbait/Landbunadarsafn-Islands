@@ -1,6 +1,6 @@
 const Authentication = require('./controllers/authentication');
 const path = require('path');
-
+const fs = require('fs');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const config = require('./config');
@@ -9,6 +9,35 @@ const multerS3 = require('multer-s3');
 const aws = require('aws-sdk');
 const Grid = require('gridfs-stream');
 const passportService = require('./services/passport');
+
+
+// PDF UPLOADS //////////////////////////////////////////
+const PDFStorage = multer.diskStorage({
+      destination: function(req, file, cb){
+            cb(null, './static/media/');
+      },
+      filename: function(req, file, cb){
+            cb(null, file.originalname);
+      }
+});
+
+const fileFilter = (req, file , cb) => {
+      // Reject File
+      if(file.mimetype === "application/pdf"){
+            cb(null, true);
+      }else {
+            cb(new Error("Ekki pdf skjal."), false);
+      }
+}
+const PDFupload = multer({
+      storage: PDFStorage,
+      fileFilter: fileFilter
+});
+
+
+
+/////////////////////////////////////////////////////////
+
 
 
 const conn = mongoose.createConnection(config.mongodb);
@@ -39,7 +68,6 @@ module.exports = function (app) {
             })
           }).array('file', 1);
 
-
           app.post('/upload', function (request, response, next) {
             upload(request, response, function (error) {
               if (error) {
@@ -50,16 +78,17 @@ module.exports = function (app) {
           });
 
 
+          app.post('/pdfupload', PDFupload.single('PDF'), function (req, res, next)  {});
+
+
           app.get('/files', async function (req, res) {
                   const response = await s3.listObjectsV2({
                         Bucket: "geymsla",
                         Prefix: "images"
                   }).promise();
-                  console.log(res);
                   res.send(response.Contents)
                 }
           )
-
           app.get('/files/:filename', async function (req, res) {    
             const response = await s3.listObjectsV2({
                   Bucket: "geymsla",
@@ -68,6 +97,8 @@ module.exports = function (app) {
             res.send(response.Contents)
           }
     )
+
+
 
       app.get('/posts', bodyParser.json() ,Authentication.getPosts);
       app.get('/frontPosts', bodyParser.json() ,Authentication.getFrontPosts);
