@@ -14,7 +14,7 @@ Kveikir á síðunni og opnar á port: 3000
 * Mongoose
 * MongoDB
 * JWT
-
+* Adobe XD
 
 # Lýsing
 Fyrsta heila vefsíðan sem að ég forritaði. Kenndi mér helling. Myndi gera þessa síðu öðruvísi ef að ég myndi byrja í dag.
