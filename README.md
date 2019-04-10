@@ -8,6 +8,7 @@ Kveikir á síðunni og opnar á port: 3000
 
 ### Tól sem að voru notuð:
 * React
+* React-Router
 * SASS
 * Redux
 * Express
@@ -15,6 +16,9 @@ Kveikir á síðunni og opnar á port: 3000
 * MongoDB
 * JWT
 * Adobe XD
+* Postman
+
+
 
 # Lýsing
 Fyrsta heila vefsíðan sem að ég forritaði. Kenndi mér helling. Myndi gera þessa síðu öðruvísi ef að ég myndi byrja í dag.
